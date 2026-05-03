@@ -1,0 +1,83 @@
+# Proxy Server With Cache
+
+## Project Description
+
+This project is a threaded HTTP proxy server written in C/C++. It accepts client connections on a user-supplied port, parses incoming HTTP requests, forwards valid requests to the origin server, and relays the response back to the client.
+
+The proxy also maintains an in-memory cache for responses. Cached entries are tracked with a time-based least-recently-used (LRU) policy, so repeated requests for the same URL can be served faster without contacting the remote server again.
+
+Current behavior:
+
+- Supports multiple clients using threads.
+- Handles HTTP `GET` requests.
+- Accepts HTTP `1.0` and `1.1` requests.
+- Stores cached responses up to the configured cache size limit.
+- Evicts the least recently used cached response when space is needed.
+- Returns standard HTTP error responses for unsupported or invalid requests.
+
+## Project Structure
+
+- `proxy_server_with_cache.c` - main proxy server, request forwarding, and cache implementation.
+- `proxy_parse.c` / `proxy_parse.h` - HTTP request parsing library.
+- `Makefile` - build, clean, and packaging commands.
+- `notes.txt` - background notes on HTTP and socket concepts.
+
+## How To Build
+
+Build the proxy binary with:
+
+```bash
+make
+```
+
+This produces an executable named `proxy`.
+
+To remove build artifacts:
+
+```bash
+make clean
+```
+
+To create the submission archive used by the existing Makefile:
+
+```bash
+make tar
+```
+
+## How To Run
+
+Start the proxy by passing a port number:
+
+```bash
+./proxy <port>
+```
+
+Example:
+
+```bash
+./proxy 8080
+```
+
+The proxy will listen on the given port and print connection activity to the console.
+
+To use it from a client, configure your browser or command-line tool to send traffic through `localhost:<port>`. For example:
+
+```bash
+curl -x http://127.0.0.1:8080 http://example.com/
+```
+
+## Future Scope
+
+Possible improvements for this project include:
+
+- Add support for HTTP methods beyond `GET`.
+- Improve handling of HTTPS using tunneling with `CONNECT`.
+- Make cache synchronization cleaner and more robust for concurrent access.
+- Add richer cache policies, such as configurable size limits or TTL-based expiration.
+- Improve error handling and logging for debugging and observability.
+- Add configuration support for upstream proxy settings, cache limits, and thread limits.
+- Add tests for request parsing, cache eviction, and forwarding behavior.
+
+## Notes
+
+The current implementation is best suited for learning and experimentation with sockets, threading, request parsing, and caching in a proxy server.
