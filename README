@@ -1,83 +1,134 @@
 # Proxy Server With Cache
 
-## Project Description
+A multithreaded HTTP proxy server written in C/C++ with an in-memory LRU cache for faster response delivery.
 
-This project is a threaded HTTP proxy server written in C/C++. It accepts client connections on a user-supplied port, parses incoming HTTP requests, forwards valid requests to the origin server, and relays the response back to the client.
+---
 
-The proxy also maintains an in-memory cache for responses. Cached entries are tracked with a time-based least-recently-used (LRU) policy, so repeated requests for the same URL can be served faster without contacting the remote server again.
+## Overview
 
-Current behavior:
+This project implements a threaded HTTP proxy server that:
 
-- Supports multiple clients using threads.
-- Handles HTTP `GET` requests.
-- Accepts HTTP `1.0` and `1.1` requests.
-- Stores cached responses up to the configured cache size limit.
-- Evicts the least recently used cached response when space is needed.
-- Returns standard HTTP error responses for unsupported or invalid requests.
+* Accepts client connections on a user-defined port
+* Parses incoming HTTP requests
+* Forwards valid requests to the origin server
+* Relays responses back to the client
+
+To improve performance, the proxy maintains an in-memory cache using a **Least Recently Used (LRU)** eviction policy, allowing repeated requests to be served without contacting the remote server.
+
+---
+
+## Features
+
+* Multithreaded client handling
+* Supports HTTP `GET` requests
+* Compatible with HTTP `1.0` and `1.1`
+* In-memory caching with size limits
+* LRU-based cache eviction
+* Standard HTTP error handling for invalid requests
+
+---
 
 ## Project Structure
 
-- `proxy_server_with_cache.c` - main proxy server, request forwarding, and cache implementation.
-- `proxy_parse.c` / `proxy_parse.h` - HTTP request parsing library.
-- `Makefile` - build, clean, and packaging commands.
-- `notes.txt` - background notes on HTTP and socket concepts.
+* `proxy_server_with_cache.c` — Main proxy server, request forwarding, and cache logic
+* `proxy_parse.c`, `proxy_parse.h` — HTTP request parsing utilities
+* `Makefile` — Build, clean, and packaging commands
+* `notes.txt` — Background notes on HTTP and socket concepts
 
-## How To Build
+---
 
-Build the proxy binary with:
+## Build Instructions
+
+Compile the project using:
 
 ```bash
 make
 ```
 
-This produces an executable named `proxy`.
+This generates the executable:
 
-To remove build artifacts:
+```bash
+proxy
+```
+
+### Clean build files
 
 ```bash
 make clean
 ```
 
-To create the submission archive used by the existing Makefile:
+### Create submission archive
 
 ```bash
 make tar
 ```
 
-## How To Run
+---
 
-Start the proxy by passing a port number:
+## Usage
+
+Run the proxy server by specifying a port:
 
 ```bash
 ./proxy <port>
 ```
 
-Example:
+### Example
 
 ```bash
 ./proxy 8080
 ```
 
-The proxy will listen on the given port and print connection activity to the console.
+The proxy will start listening on the given port and log connection activity to the console.
 
-To use it from a client, configure your browser or command-line tool to send traffic through `localhost:<port>`. For example:
+---
+
+## Testing the Proxy
+
+You can test the proxy using tools like `curl`:
 
 ```bash
 curl -x http://127.0.0.1:8080 http://example.com/
 ```
 
-## Future Scope
+Or configure your browser to use:
 
-Possible improvements for this project include:
+```
+localhost:<port>
+```
 
-- Add support for HTTP methods beyond `GET`.
-- Improve handling of HTTPS using tunneling with `CONNECT`.
-- Make cache synchronization cleaner and more robust for concurrent access.
-- Add richer cache policies, such as configurable size limits or TTL-based expiration.
-- Improve error handling and logging for debugging and observability.
-- Add configuration support for upstream proxy settings, cache limits, and thread limits.
-- Add tests for request parsing, cache eviction, and forwarding behavior.
+as the HTTP proxy.
+
+---
+
+## Future Improvements
+
+* Support additional HTTP methods (`POST`, `PUT`, etc.)
+* Add HTTPS support via `CONNECT` tunneling
+* Improve thread-safe cache synchronization
+* Introduce configurable cache size and TTL-based expiration
+* Enhance logging and debugging capabilities
+* Add configuration support (thread limits, upstream proxies, etc.)
+* Implement unit and integration tests
+
+---
+
+## Limitations
+
+* Currently supports only `GET` requests
+* No HTTPS support yet
+* Cache is in-memory only (not persistent)
+* Limited configurability
+
+---
 
 ## Notes
 
-The current implementation is best suited for learning and experimentation with sockets, threading, request parsing, and caching in a proxy server.
+This project is intended for learning purposes and demonstrates core concepts in:
+
+* Socket programming
+* Multithreading
+* HTTP request parsing
+* Caching strategies
+
+---
